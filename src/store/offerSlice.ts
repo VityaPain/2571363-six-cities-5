@@ -4,7 +4,7 @@ import {
   TPlaceEntity,
   TPlaceEntityFull,
   TCommentEntityFull,
-} from '@components/PlaceCard/PlaceCard.typings/PlaceCard.typings';
+} from '@typings/place-card/place-card';
 import {
   setOffer,
   setComments,

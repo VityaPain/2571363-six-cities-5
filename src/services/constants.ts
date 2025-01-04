@@ -5,8 +5,8 @@ export const API_ROUTES = {
     GET_NEARBY: (offerId: string) => `/offers/${offerId}/nearby`,
   },
   FAVORITE: {
-    GET: '/favorite',
-    SET: (offerId: string, status: string) => `/favorite/${offerId}/${status}`,
+    GET: '/favorite/',
+    POST: (offerId: string, status: string) => `/favorite/${offerId}/${status}`,
   },
   COMMENTS: {
     GET: (offerId: string) => `/comments/${offerId}`,
