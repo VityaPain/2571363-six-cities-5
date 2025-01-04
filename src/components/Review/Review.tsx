@@ -1,5 +1,5 @@
-import Rating from '@components/Rating/Rating';
-import { TCommentEntityFull } from '@components/PlaceCard/PlaceCard.typings/PlaceCard.typings';
+import Rating from '@components/rating/rating';
+import { TCommentEntityFull } from '@typings/place-card/place-card';
 
 type TReviewProps = {
   review: TCommentEntityFull;

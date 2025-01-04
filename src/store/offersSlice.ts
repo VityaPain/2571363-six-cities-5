@@ -6,10 +6,10 @@ import {
   getGlobalOffers,
   setOfferActive,
 } from './actions';
-import { TPlaceEntity } from '@components/PlaceCard/PlaceCard.typings/PlaceCard.typings';
-import { City } from '@typings/City/City';
-import { SortOrder } from '@components/SortingFilter/SortingFilter.typings/SortingFilter.typings';
-import { cities } from '@mocks/Cities/Cities';
+import { TPlaceEntity } from '@typings/place-card/place-card';
+import { City } from '@typings/city/city';
+import { SortOrder } from '@typings/sorting-filter/sorting-filter';
+import { cities } from '@mocks/cities/cities';
 
 type OffersState = {
   globalOffers: TPlaceEntity[];

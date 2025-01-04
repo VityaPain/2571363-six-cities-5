@@ -1,4 +1,4 @@
-import { TUserEntity } from 'typings/User/User';
+import { TUserEntity } from '@typings/user/user';
 
 export type TReviewItem = {
   id: string;

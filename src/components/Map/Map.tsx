@@ -1,10 +1,10 @@
 import { useRef, useEffect, useMemo } from 'react';
 import { Icon, Marker, layerGroup } from 'leaflet';
 import { useAppSelector } from '@store/hooks';
-import useMap from './Map.utils/useMap';
-import { City, Point } from '@typings/City/City';
+import useMap from './map.utils/use-map';
+import { City, Point } from '@typings/city/city';
 import 'leaflet/dist/leaflet.css';
-import offersToPoints from '@utils/offersToPoints/offersToPoints';
+import translateOffersToPoints from '@utils/translate-offers-to-points/translate-offers-to-points';
 
 type TMapProps = {
   city: City;
@@ -29,7 +29,7 @@ function Map(props: TMapProps): JSX.Element {
   const activeOffer = useAppSelector((state) => state.offersSlice.activeOffer);
   const selectedPoint = useMemo(() => {
     if (activeOffer) {
-      return offersToPoints([activeOffer])[0];
+      return translateOffersToPoints([activeOffer])[0];
     }
   }, [activeOffer]);
 

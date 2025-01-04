@@ -1,18 +1,18 @@
 import { createAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { API_ROUTES, errorHandler, APIErrorResponse } from '@services/index';
 import { AppThunk, AsyncThunkConfig } from '@store/types';
-import { SortOrder } from '@components/SortingFilter/SortingFilter.typings/SortingFilter.typings';
-import filterOffers from '@utils/filterOffers/filterOffers';
-import sortOffers from '@utils/sortOffers/sortOffers';
-import { City } from '@typings/City/City';
+import { SortOrder } from '@typings/sorting-filter/sorting-filter';
+import filterOffers from '@utils/filter-offers/filter-offers';
+import sortOffers from '@utils/sort-offers/sort-offers';
+import { City } from '@typings/city/city';
 import {
   TPlaceEntity,
   TPlaceEntityFull,
   TCommentEntity,
   TCommentEntityFull,
-} from '@components/PlaceCard/PlaceCard.typings/PlaceCard.typings';
-import { TAuthInfo, TUserEntity } from '@typings/User/User';
-import { clearToken, setToken } from '@utils/user/user';
+} from '@typings/place-card/place-card';
+import { TAuthInfo, TUserEntity } from '@typings/user/user';
+import { clearToken, setToken, getToken } from '@utils/user/user';
 
 export const Actions = {
   // город и оферы к нему
@@ -31,6 +31,8 @@ export const Actions = {
   VALIDATE_USER: 'user/validate',
   LOGIN: 'user/login',
   LOGOUT: 'user/logout',
+  FETCH_FAVORITES_OFFERS: '/favotire',
+  SET_FAVORITE_STATUS: '/favotire/set',
   // офер
   SET_OFFER: 'offer/set',
   SET_COMMENTS: 'comments/set',
@@ -120,11 +122,15 @@ export const validateUser = createAsyncThunk<void, void, AsyncThunkConfig>(
   Actions.VALIDATE_USER,
   async (_, thunkApi) => {
     try {
-      const response = await thunkApi.extra.api.get<TUserEntity>(
-        API_ROUTES.USER.VALIDATE
-      );
-      thunkApi.dispatch(setAuthorizationStatus(true));
-      thunkApi.dispatch(setUserData(response.data));
+      const token = getToken();
+
+      if (token) {
+        const response = await thunkApi.extra.api.get<TUserEntity>(
+          API_ROUTES.USER.VALIDATE
+        );
+        thunkApi.dispatch(setAuthorizationStatus(true));
+        thunkApi.dispatch(setUserData(response.data));
+      }
     } catch (error) {
       clearToken();
       thunkApi.dispatch(setAuthorizationStatus(false));
@@ -198,7 +204,7 @@ export const fetchOffer = createAsyncThunk<void, string, AsyncThunkConfig>(
       >(API_ROUTES.OFFERS.GET_NEARBY(offerId));
 
       thunkApi.dispatch(setOffer(offer));
-      thunkApi.dispatch(setComments(comments));
+      thunkApi.dispatch(setComments(comments.toReversed().slice(0, 10)));
       thunkApi.dispatch(setNearbyOffers(nearbyOffers));
 
       thunkApi.dispatch(setOfferLoading(false));
@@ -207,6 +213,43 @@ export const fetchOffer = createAsyncThunk<void, string, AsyncThunkConfig>(
     }
   }
 );
+
+export const fetchFavoriteOffer = createAsyncThunk<
+  TPlaceEntity[],
+  void,
+  AsyncThunkConfig
+>(Actions.FETCH_FAVORITES_OFFERS, async (_, thunkApi) => {
+  try {
+    const response = await thunkApi.extra.api.get<TPlaceEntity[]>(
+      API_ROUTES.FAVORITE.GET
+    );
+
+    return response.data;
+  } catch (error) {
+    return thunkApi.rejectWithValue(errorHandler(error));
+  }
+});
+
+export const setFavoriteStatus = createAsyncThunk<
+  void,
+  { offerId: string; status: number; isMainPage: boolean },
+  AsyncThunkConfig
+>(Actions.SET_FAVORITE_STATUS, async (payload, thunkApi) => {
+  try {
+    await thunkApi.extra.api.post<TCommentEntityFull>(
+      `${API_ROUTES.FAVORITE.GET}/${payload.offerId}/${payload.status}`
+    );
+
+    if (!payload.isMainPage) {
+      thunkApi.dispatch(fetchOffer(payload.offerId));
+    } else {
+      thunkApi.dispatch(getGlobalOffers());
+    }
+    thunkApi.dispatch(fetchFavoriteOffer());
+  } catch (error) {
+    thunkApi.dispatch(setCommentError(errorHandler(error)));
+  }
+});
 
 export const postComment = createAsyncThunk<
   void,

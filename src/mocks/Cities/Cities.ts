@@ -1,4 +1,4 @@
-import { City, CityName } from '../../typings/City/City';
+import { City, CityName } from '../../typings/city/city';
 
 export const cities: Record<CityName, City> = {
   Paris: {
