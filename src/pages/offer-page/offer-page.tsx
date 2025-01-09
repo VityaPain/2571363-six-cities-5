@@ -169,9 +169,7 @@ const OfferPage = (): JSX.Element => {
           <section className="offer__map map">
             <Map
               city={offer.city}
-              points={
-                activePoint ? [...activePoint, ...nearbyPoints.slice(0, 3)] : []
-              }
+              points={activePoint ? [...activePoint, ...nearbyPoints] : []}
             />
           </section>
         </section>

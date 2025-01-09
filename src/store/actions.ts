@@ -205,7 +205,7 @@ export const fetchOffer = createAsyncThunk<void, string, AsyncThunkConfig>(
 
       thunkApi.dispatch(setOffer(offer));
       thunkApi.dispatch(setComments(comments.toReversed().slice(0, 10)));
-      thunkApi.dispatch(setNearbyOffers(nearbyOffers));
+      thunkApi.dispatch(setNearbyOffers(nearbyOffers.slice(0, 3)));
 
       thunkApi.dispatch(setOfferLoading(false));
     } catch (error) {
